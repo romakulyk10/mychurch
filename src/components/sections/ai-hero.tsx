@@ -12,10 +12,7 @@ export default function AiHero() {
         </p>
       </FadeIn>
 
-      <FadeIn
-        delay={2}
-        className="relative w-full max-w-[960px] mx-5 md:mx-8 aspect-[960/592] rounded-[24px] md:rounded-[40px] overflow-hidden bg-[#f8f8f8]"
-      />
+      <div className="relative w-full max-w-[960px] mx-5 md:mx-8 aspect-[960/592] rounded-[24px] md:rounded-[40px] overflow-hidden bg-[#f8f8f8]" />
 
       <div className="absolute bottom-0 left-0 w-full h-20 pointer-events-none bg-gradient-to-t from-[#fcfcfc] to-transparent" />
     </section>
