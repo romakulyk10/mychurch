@@ -1,17 +1,16 @@
 "use client";
 
-import React, { useEffect, useRef, ReactNode } from "react";
+import { useEffect, useRef, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 interface FadeInProps {
   children: ReactNode;
   className?: string;
   delay?: 0 | 1 | 2 | 3;
-  as?: keyof React.JSX.IntrinsicElements;
 }
 
-export default function FadeIn({ children, className, delay = 0, as: Tag = "div" }: FadeInProps) {
-  const ref = useRef<HTMLElement>(null);
+export default function FadeIn({ children, className, delay = 0 }: FadeInProps) {
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = ref.current;
@@ -30,12 +29,11 @@ export default function FadeIn({ children, className, delay = 0, as: Tag = "div"
   }, []);
 
   return (
-    // @ts-expect-error dynamic tag
-    <Tag
+    <div
       ref={ref}
       className={cn("fade-in", delay > 0 && `fade-in-delay-${delay}`, className)}
     >
       {children}
-    </Tag>
+    </div>
   );
 }
