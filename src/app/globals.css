@@ -7,7 +7,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -121,10 +121,79 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
   html {
-    @apply font-sans;
+    scroll-behavior: smooth;
   }
+  body {
+    @apply bg-[#fcfcfc] text-foreground font-sans;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overscroll-behavior: none;
+  }
+  a, button {
+    cursor: pointer;
+  }
+}
+
+/* Scroll-triggered fade-in */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: opacity, transform;
+}
+.fade-in.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-in-delay-1 { transition-delay: 0.1s; }
+.fade-in-delay-2 { transition-delay: 0.2s; }
+.fade-in-delay-3 { transition-delay: 0.3s; }
+
+/* Button micro-interactions */
+.btn-primary {
+  transition: filter 0.15s ease;
+}
+.btn-primary:hover {
+  filter: brightness(1.28) saturate(0.78);
+}
+.btn-primary:active {
+  filter: brightness(0.94);
+}
+
+.btn-secondary {
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+.btn-secondary:hover .btn-secondary-bg {
+  background-color: #f0f0f0;
+}
+.btn-secondary:active .btn-secondary-bg {
+  background-color: #e8e8e8;
+}
+
+/* Custom CTA colors */
+:root {
+  --cta-default: #007aff;
+  --cta-shadow: #005fc6;
+  --cta-highlight: #8cc2ff;
+}
+
+@keyframes spin-once {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes fade-in-out {
+  0%   { opacity: 0; }
+  40%  { opacity: 0.6; }
+  100% { opacity: 0; }
+}
+
+.animate-spin-once {
+  animation: spin-once 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.animate-fade-in-out {
+  animation: fade-in-out 0.35s ease-in-out both;
 }
