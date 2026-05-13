@@ -1,7 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import FadeIn from "@/components/shared/fade-in";
+import { useDemoModal } from "@/context/demo-modal-context";
 
 export default function Cta() {
+  const { open } = useDemoModal();
   return (
     <section className="w-full flex flex-col items-center py-20 md:py-[120px] bg-[#fcfcfc]">
       <FadeIn className="flex flex-col items-center gap-10 md:gap-16 w-full max-w-[600px] px-5 md:px-0 text-center">
@@ -17,17 +21,17 @@ export default function Cta() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-2 items-center justify-center w-full sm:w-auto">
-          <Link
-            href="#demo"
-            className="btn-primary relative flex items-center justify-center h-12 w-full sm:w-auto px-9 rounded-full overflow-hidden"
+          <button
+            onClick={open}
+            className="btn-primary group relative flex items-center justify-center h-12 w-full sm:w-auto px-9 rounded-full overflow-hidden"
           >
-            <span className="absolute inset-0 bg-[#007aff] rounded-full" />
+            <span className="absolute inset-0 bg-[#007aff] group-hover:bg-[#2F93FF] transition-colors duration-150 rounded-full" />
             <span className="absolute inset-0 rounded-full shadow-[inset_0px_1px_0px_1px_#8cc2ff]" />
             <span className="absolute inset-0 rounded-full border border-[#005fc6]" />
             <span className="relative text-white font-semibold text-base tracking-[-0.32px] leading-[1.4] whitespace-nowrap">
               Замовити демо
             </span>
-          </Link>
+          </button>
 
           <Link
             href="https://t.me/"

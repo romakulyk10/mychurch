@@ -58,7 +58,7 @@ export default function Problems() {
                       isLeft ? "pr-8 border-r border-black/[0.08]" : "pl-8",
                     ].join(" ")}
                   >
-                    <Image src={card.icon} alt={card.title} width={48} height={48} quality={75} loading="lazy" />
+                    <Image src={card.icon} alt={card.title} width={48} height={48} sizes="48px" quality={80} loading="lazy" />
                     <div className="flex flex-col gap-2.5">
                       <h3 className="font-semibold text-black text-[18px] leading-[1.36] tracking-[-0.18px]">
                         {card.title}
@@ -78,7 +78,7 @@ export default function Problems() {
         <div className="flex md:hidden flex-col gap-7">
           {CARDS.map((card) => (
             <FadeIn key={card.title} className="flex gap-4 items-start">
-              <Image src={card.icon} alt={card.title} width={40} height={40} quality={75} loading="lazy" className="shrink-0 mt-0.5" />
+              <Image src={card.icon} alt={card.title} width={40} height={40} sizes="40px" quality={80} loading="lazy" className="shrink-0 mt-0.5" />
               <div className="flex flex-col gap-1.5">
                 <h3 className="font-semibold text-black text-[17px] leading-[1.36] tracking-[-0.17px]">
                   {card.title}

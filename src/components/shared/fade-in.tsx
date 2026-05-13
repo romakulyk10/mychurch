@@ -9,23 +9,51 @@ interface FadeInProps {
   delay?: 0 | 1 | 2 | 3;
 }
 
+// Single shared IntersectionObserver for all FadeIn instances on the page
+const callbacks = new Map<Element, () => void>();
+let sharedObserver: IntersectionObserver | null = null;
+
+function observe(el: Element, onVisible: () => void) {
+  if (!sharedObserver) {
+    sharedObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const cb = callbacks.get(entry.target);
+            if (cb) {
+              cb();
+              callbacks.delete(entry.target);
+              sharedObserver?.unobserve(entry.target);
+            }
+          }
+        }
+      },
+      { threshold: 0.1 }
+    );
+  }
+  callbacks.set(el, onVisible);
+  sharedObserver.observe(el);
+}
+
+function unobserve(el: Element) {
+  callbacks.delete(el);
+  sharedObserver?.unobserve(el);
+}
+
 export default function FadeIn({ children, className, delay = 0 }: FadeInProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.classList.add("is-visible");
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
+    observe(el, () => {
+      el.classList.add("is-visible");
+      // Release GPU layer once animation is done
+      el.addEventListener("transitionend", () => {
+        el.style.willChange = "auto";
+      }, { once: true });
+    });
+    return () => unobserve(el);
   }, []);
 
   return (

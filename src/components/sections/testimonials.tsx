@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import FadeIn from "@/components/shared/fade-in";
 
 const TESTIMONIALS = [
@@ -30,14 +30,24 @@ export default function Testimonials() {
   const avatarRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const rafRef = useRef<number | null>(null);
 
-  const scrollToActive = (idx: number) => {
+  const scrollToActive = (idx: number, behavior: ScrollBehavior = "smooth") => {
     const container = listRef.current;
-    const el = avatarRefs.current[idx];
-    if (!container || !el) return;
-    const center = container.offsetWidth / 2;
-    const elCenter = el.offsetLeft + el.offsetWidth / 2;
-    container.scrollTo({ left: elCenter - center, behavior: "smooth" });
+    if (!container) return;
+    // Use known final sizes instead of DOM (getBoundingClientRect captures mid-transition
+    // which shifts positions for avatars far from center)
+    const isMd = window.innerWidth >= 768;
+    const activeW = isMd ? 52 : 48;
+    const inactiveW = isMd ? 40 : 36;
+    const gap = 8; // gap-2
+    // All items before idx will be inactive; paddingLeft="50%" cancels out
+    const scrollLeft = idx * (inactiveW + gap) + activeW / 2;
+    container.scrollTo({ left: scrollLeft, behavior });
   };
+
+  useLayoutEffect(() => {
+    scrollToActive(active, "auto");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     scrollToActive(active);
@@ -69,21 +79,25 @@ export default function Testimonials() {
 
         <FadeIn delay={1} className="flex flex-col gap-6">
 
-          {/* Картка відгуку */}
-          <div className="relative">
-            <div
-              className="relative overflow-hidden bg-white rounded-2xl px-6 pt-6 pb-[41px]"
-              style={{
-                border: "1px solid rgba(0,0,0,0.12)",
-                boxShadow: "0 0 0 1px rgba(0,0,0,0.15), 0 3px 2px 0 rgba(0,0,0,0.06)",
-              }}
-            >
-              <span className="absolute top-6 right-6 text-[#007aff] text-[80px] leading-none select-none [font-family:var(--font-caveat)]">
-                &#x201C;
-              </span>
-              <div className="flex items-center gap-3 mb-4">
+          {/* Union card: body + triangle share one drop-shadow */}
+          <div
+            className="relative"
+            style={{
+              filter:
+                "drop-shadow(0px 0px 1px rgba(0,0,0,0.12)) drop-shadow(0px 3px 2px rgba(0,0,0,0.07))",
+            }}
+          >
+            {/* Card body */}
+            <div className="relative bg-white rounded-[16px] px-6 pt-6 pb-[41px]">
+              {/* Quote mark constrained to 42×62 box so it doesn't overflow */}
+              <div className="absolute top-6 right-6 w-[42px] h-[62px] overflow-hidden select-none">
+                <span className="text-[#007aff] text-[80px] leading-none [font-family:var(--font-caveat)]">
+                  &#x201C;
+                </span>
+              </div>
+              <div className="flex items-center gap-4 mb-4">
                 <div
-                  className="w-[52px] h-[52px] rounded-full shrink-0 flex items-center justify-center text-white font-semibold text-[17px]"
+                  className="w-10 h-10 rounded-full shrink-0 flex items-center justify-center text-white font-semibold text-[15px] border-[1.5px] border-black/[0.12]"
                   style={{ backgroundColor: TESTIMONIALS[active].color }}
                 >
                   {TESTIMONIALS[active].initial}
@@ -92,13 +106,20 @@ export default function Testimonials() {
                   {TESTIMONIALS[active].name}
                 </span>
               </div>
-              <p className="text-base text-black/80 leading-[1.6] tracking-[-0.16px]">
+              {/* min-h keeps card height stable for 1–2 line quotes */}
+              <p className="text-base text-black/80 leading-[1.6] tracking-[-0.16px] min-h-[77px]">
                 {TESTIMONIALS[active].text}
               </p>
             </div>
+            {/* Triangle — filled clip-path so drop-shadow wraps both shapes as one Union */}
             <div
-              className="absolute bottom-[-9px] left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45"
-              style={{ borderRight: "1px solid rgba(0,0,0,0.08)", borderBottom: "1px solid rgba(0,0,0,0.08)" }}
+              className="absolute left-1/2 -translate-x-1/2 bg-white"
+              style={{
+                bottom: "-13px",
+                width: "28px",
+                height: "14px",
+                clipPath: "polygon(0 0, 100% 0, 50% 100%)",
+              }}
             />
           </div>
 

@@ -122,7 +122,7 @@
     @apply border-border outline-ring/50;
   }
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
   }
   body {
     @apply bg-[#fcfcfc] text-foreground font-sans;
@@ -151,12 +151,17 @@
 .fade-in-delay-2 { transition-delay: 0.2s; }
 .fade-in-delay-3 { transition-delay: 0.3s; }
 
+/* Custom CTA colors */
+:root {
+  --cta-default: #007aff;
+  --cta-hover: #2f93ff;
+  --cta-shadow-effect: #005fc6;
+  --cta-highlight: #8cc2ff;
+}
+
 /* Button micro-interactions */
 .btn-primary {
   transition: filter 0.15s ease;
-}
-.btn-primary:hover {
-  filter: brightness(1.28) saturate(0.78);
 }
 .btn-primary:active {
   filter: brightness(0.94);
@@ -166,17 +171,10 @@
   transition: background-color 0.15s ease, box-shadow 0.15s ease;
 }
 .btn-secondary:hover .btn-secondary-bg {
-  background-color: #f0f0f0;
+  background-color: #f1f1f1;
 }
 .btn-secondary:active .btn-secondary-bg {
   background-color: #e8e8e8;
-}
-
-/* Custom CTA colors */
-:root {
-  --cta-default: #007aff;
-  --cta-shadow: #005fc6;
-  --cta-highlight: #8cc2ff;
 }
 
 @keyframes spin-once {

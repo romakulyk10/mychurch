@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import LogoLink from "@/components/shared/logo-link";
+import { useDemoModal } from "@/context/demo-modal-context";
 
 const NAV_LINKS = [
   { label: "Продукт", href: "/#product", match: "/" },
@@ -17,6 +18,7 @@ const NAV_LINKS = [
 export default function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const { open: openModal } = useDemoModal();
 
   return (
     <>
@@ -58,17 +60,17 @@ export default function Navbar() {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex min-w-[160px] justify-end">
-          <Link
-            href="#demo"
-            className="btn-primary relative flex items-center justify-center h-10 px-6 rounded-full overflow-hidden shrink-0"
+          <button
+            onClick={openModal}
+            className="btn-primary group relative flex items-center justify-center h-10 px-6 rounded-full overflow-hidden shrink-0"
           >
-            <span className="absolute inset-0 bg-[#007aff] rounded-full" />
+            <span className="absolute inset-0 bg-[#007aff] group-hover:bg-[#2F93FF] transition-colors duration-150 rounded-full" />
             <span className="absolute inset-0 rounded-full shadow-[inset_0px_1px_0px_1px_#8cc2ff]" />
             <span className="absolute inset-0 rounded-full border border-[#005fc6]" />
             <span className="relative text-white font-semibold text-[16px] tracking-[-0.32px] leading-[1.4] whitespace-nowrap">
               Замовити демо
             </span>
-          </Link>
+          </button>
         </div>
 
         {/* Mobile: Hamburger only */}
@@ -133,18 +135,17 @@ export default function Navbar() {
               </Link>
             ))}
             <div className="pt-3 pb-1">
-              <Link
-                href="#demo"
-                onClick={() => setOpen(false)}
-                className="btn-primary relative flex items-center justify-center h-12 w-full rounded-full overflow-hidden"
+              <button
+                onClick={() => { setOpen(false); openModal(); }}
+                className="btn-primary group relative flex items-center justify-center h-12 w-full rounded-full overflow-hidden"
               >
-                <span className="absolute inset-0 bg-[#007aff] rounded-full" />
+                <span className="absolute inset-0 bg-[#007aff] group-hover:bg-[#2F93FF] transition-colors duration-150 rounded-full" />
                 <span className="absolute inset-0 rounded-full shadow-[inset_0px_1px_0px_1px_#8cc2ff]" />
                 <span className="absolute inset-0 rounded-full border border-[#005fc6]" />
                 <span className="relative text-white font-semibold text-[16px] tracking-[-0.32px] leading-[1.4]">
                   Замовити демо
                 </span>
-              </Link>
+              </button>
             </div>
           </nav>
         </div>

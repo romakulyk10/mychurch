@@ -1,7 +1,10 @@
-import Link from "next/link";
+"use client";
+
 import FadeIn from "@/components/shared/fade-in";
+import { useDemoModal } from "@/context/demo-modal-context";
 
 export default function Hero() {
+  const { open } = useDemoModal();
   return (
     <section className="bg-white w-full flex flex-col items-center pt-12 md:pt-20 pb-16 md:pb-[104px] gap-16 md:gap-28 relative overflow-hidden">
 
@@ -20,17 +23,17 @@ export default function Hero() {
         </FadeIn>
 
         <FadeIn delay={1}>
-          <Link
-            href="#try"
-            className="btn-primary relative flex items-center justify-center h-12 w-[271px] rounded-full overflow-hidden"
+          <button
+            onClick={open}
+            className="btn-primary group relative flex items-center justify-center h-12 w-[271px] rounded-full overflow-hidden"
           >
-            <span className="absolute inset-0 bg-[#007aff] rounded-full" />
+            <span className="absolute inset-0 bg-[#007aff] group-hover:bg-[#2F93FF] transition-colors duration-150 rounded-full" />
             <span className="absolute inset-0 rounded-full shadow-[inset_0px_1px_0px_1px_#8cc2ff]" />
             <span className="absolute inset-0 rounded-full border border-[#005fc6]" />
             <span className="relative text-white font-semibold text-base tracking-[-0.32px] leading-[1.4] whitespace-nowrap">
               Спробувати безкоштовно
             </span>
-          </Link>
+          </button>
         </FadeIn>
       </div>
 

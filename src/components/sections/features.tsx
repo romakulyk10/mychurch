@@ -49,7 +49,8 @@ export default function Features() {
                 src={block.image}
                 alt={block.title}
                 fill
-                quality={75}
+                sizes="(max-width: 768px) 100vw, 382px"
+                quality={80}
                 loading="lazy"
                 className="object-cover"
               />
@@ -78,7 +79,8 @@ export default function Features() {
                 src={block.image}
                 alt={block.title}
                 fill
-                quality={75}
+                sizes="(max-width: 768px) 100vw, 382px"
+                quality={80}
                 loading="lazy"
                 className="object-cover"
               />

@@ -37,6 +37,9 @@ export default function Trust() {
                     src={logo.src}
                     alt={logo.alt}
                     fill
+                    sizes="73px"
+                    quality={80}
+                    loading="lazy"
                     className="object-contain"
                   />
                 </div>

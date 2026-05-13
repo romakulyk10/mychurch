@@ -128,34 +128,46 @@ function FaqCard({ item }: { item: { id: string; question: string; answer: strin
 
 export default function Faq() {
   return (
-    <section className="w-full bg-white py-16 md:py-20 lg:py-28">
-      <div className="w-full max-w-[600px] mx-auto px-5 md:px-0 flex flex-col gap-10 md:gap-14">
+    <div className="w-full bg-[#fcfcfc]">
 
-        <FadeIn className="flex flex-col gap-5">
-          <h2 className="font-semibold text-black text-[28px] md:text-[36px] leading-[1.2] tracking-[-0.84px] md:tracking-[-1.08px]">
-            Найчастіші запитання
-          </h2>
-          <p className="text-base font-normal text-black/80 leading-[1.5]">
-            Тут зібрані відповіді на найпоширеніші запитання про роботу платформи MyChurch.
-          </p>
+      {/* Hero */}
+      <section className="w-full bg-white py-[80px] relative">
+        <FadeIn className="w-full max-w-[600px] mx-auto px-5 md:px-0 flex flex-col items-center gap-8">
+          <div className="w-[72px] h-[72px] rounded-[16px] bg-[#d9d9d9] shrink-0" />
+          <div className="flex flex-col items-center text-center gap-5">
+            <h2 className="font-semibold text-black text-[36px] md:text-[53px] leading-[1.12] tracking-[-1.08px] md:tracking-[-1.59px]">
+              Найчастіші запитання
+            </h2>
+            <p className="text-base font-normal text-black/80 leading-[1.5] max-w-[447px]">
+              Тут зібрані відповіді на найпоширеніші запитання про роботу платформи MyChurch.
+            </p>
+          </div>
         </FadeIn>
+        {/* Gradient fade white → #fcfcfc */}
+        <div className="absolute bottom-0 left-0 right-0 h-[80px] bg-gradient-to-b from-white to-[#fcfcfc] pointer-events-none" />
+      </section>
 
-        <FadeIn delay={1} className="flex flex-col gap-8 md:gap-12">
-          {categories.map((category) => (
-            <div key={category.title} className="flex flex-col gap-3">
-              <h3 className="text-[15px] md:text-base font-semibold text-black/40 leading-[1.36] tracking-[-0.16px]">
+      {/* FAQ categories */}
+      {categories.map((category, index) => (
+        <section
+          key={category.title}
+          className={`w-full ${index === 0 ? "py-[80px]" : "pt-[40px] pb-[80px]"}`}
+        >
+          <div className="w-full max-w-[600px] mx-auto px-5 md:px-0">
+            <FadeIn delay={(Math.min(index + 1, 3)) as 0 | 1 | 2 | 3} className="flex flex-col gap-[40px]">
+              <h3 className="text-[24px] md:text-[32px] font-semibold text-black leading-[1.2] tracking-[-0.72px] md:tracking-[-0.96px]">
                 {category.title}
               </h3>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-[16px]">
                 {category.items.map((item) => (
                   <FaqCard key={item.id} item={item} />
                 ))}
               </div>
-            </div>
-          ))}
-        </FadeIn>
+            </FadeIn>
+          </div>
+        </section>
+      ))}
 
-      </div>
-    </section>
+    </div>
   );
 }

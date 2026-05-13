@@ -52,7 +52,8 @@ export default function Integrations() {
                 alt={card.title}
                 width={48}
                 height={48}
-                quality={75}
+                sizes="48px"
+                quality={80}
                 loading="lazy"
                 className="rounded-lg shrink-0"
               />
