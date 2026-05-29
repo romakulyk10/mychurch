@@ -1,14 +1,16 @@
-import Image from "next/image";
 import FadeIn from "@/components/shared/fade-in";
 
 const LOGOS = [
-  { id: 1, src: null, alt: "Церква партнер 1" },
-  { id: 2, src: null, alt: "Церква партнер 2" },
-  { id: 3, src: "/new-life-logo.png", alt: "New Life Church" },
-  { id: 4, src: null, alt: "Церква партнер 4" },
-  { id: 5, src: null, alt: "Церква партнер 5" },
-  { id: 6, src: null, alt: "Церква партнер 6" },
+  { id: 1 },
+  { id: 2 },
+  { id: 3 },
+  { id: 4 },
+  { id: 5 },
+  { id: 6 },
 ];
+
+// Duplicate for seamless infinite loop
+const TRACK = [...LOGOS, ...LOGOS];
 
 export default function Trust() {
   return (
@@ -23,30 +25,33 @@ export default function Trust() {
         </p>
       </FadeIn>
 
-      {/* Logos — horizontal scroll on mobile, fixed row on desktop */}
-      <FadeIn delay={1} className="relative w-full overflow-x-auto md:overflow-hidden">
-        <div className="flex gap-4 md:gap-6 items-center px-5 md:justify-center min-w-max md:min-w-0">
-          {LOGOS.map((logo) => (
-            <div
-              key={logo.id}
-              className="shrink-0 rounded-[28px] md:rounded-[40px] overflow-hidden flex items-center justify-center bg-[#d9d9d9] w-32 h-24 md:w-40 md:h-32"
-            >
-              {logo.src && (
-                <div className="relative w-[60px] h-[60px] md:w-[73px] md:h-[73px]">
-                  <Image
-                    src={logo.src}
-                    alt={logo.alt}
-                    fill
-                    sizes="73px"
-                    quality={80}
-                    loading="lazy"
-                    className="object-contain"
-                  />
-                </div>
-              )}
-            </div>
-          ))}
+      {/* Slider wrapper — relative so overlays position against it */}
+      <FadeIn delay={1} className="relative w-full max-w-[960px]">
+        {/* Overflow clip on inner div so overlays sit outside clip context */}
+        <div className="overflow-hidden">
+          <div className="flex gap-6 animate-marquee w-max">
+            {TRACK.map((logo, i) => (
+              <div
+                key={`${logo.id}-${i}`}
+                className="shrink-0 rounded-[28px] bg-[#d9d9d9]"
+                style={{ width: 160, height: 128 }}
+              />
+            ))}
+          </div>
         </div>
+
+        {/* Left fade — ease curve to avoid hard edge */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 left-0 w-24"
+          style={{ background: "linear-gradient(to right, rgba(252,252,252,1) 0%, rgba(252,252,252,0.95) 10%, rgba(252,252,252,0.8) 25%, rgba(252,252,252,0.5) 50%, rgba(252,252,252,0.15) 75%, rgba(252,252,252,0) 100%)" }}
+        />
+        {/* Right fade — ease curve to avoid hard edge */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 right-0 w-24"
+          style={{ background: "linear-gradient(to left, rgba(252,252,252,1) 0%, rgba(252,252,252,0.95) 10%, rgba(252,252,252,0.8) 25%, rgba(252,252,252,0.5) 50%, rgba(252,252,252,0.15) 75%, rgba(252,252,252,0) 100%)" }}
+        />
       </FadeIn>
 
     </section>
