@@ -9,7 +9,6 @@ interface FadeInProps {
   delay?: 0 | 1 | 2 | 3;
 }
 
-// Single shared IntersectionObserver for all FadeIn instances on the page
 const callbacks = new Map<Element, () => void>();
 let sharedObserver: IntersectionObserver | null = null;
 
@@ -46,19 +45,33 @@ export default function FadeIn({ children, className, delay = 0 }: FadeInProps) 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+
+    let rafId: number;
+
     observe(el, () => {
-      el.classList.add("is-visible");
-      // Release GPU layer once animation is done
-      el.addEventListener("transitionend", () => {
-        el.style.willChange = "auto";
-      }, { once: true });
+      // Promote GPU layer one frame before animation starts
+      el.style.willChange = "opacity, transform";
+      rafId = requestAnimationFrame(() => {
+        // Clear the inline opacity guard — CSS animation takes over from here
+        el.style.opacity = "";
+        el.classList.add("is-visible");
+        el.addEventListener("animationend", () => {
+          el.style.willChange = "auto";
+        }, { once: true });
+      });
     });
-    return () => unobserve(el);
+
+    return () => {
+      unobserve(el);
+      cancelAnimationFrame(rafId);
+    };
   }, []);
 
   return (
+    // opacity:0 inline = guaranteed invisible on first paint, even before CSS loads
     <div
       ref={ref}
+      style={{ opacity: 0 }}
       className={cn("fade-in", delay > 0 && `fade-in-delay-${delay}`, className)}
     >
       {children}

@@ -105,23 +105,26 @@ function FaqCard({ item }: { item: { id: string; question: string; answer: strin
         <span className="font-medium text-black text-[17px] leading-[1.36] tracking-[-0.17px] text-left">
           {item.question}
         </span>
-        <span className="shrink-0 w-5 h-5 flex items-center justify-center text-black/40 mt-[1px]">
-          {open ? (
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M4 10h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
-          ) : (
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M10 4v12M4 10h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
-          )}
+        <span className="shrink-0 w-5 h-5 flex items-center justify-center text-black/40 mt-[1px] transition-transform duration-200" style={{ transform: open ? "rotate(45deg)" : "none" }}>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 4v12M4 10h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
         </span>
       </div>
-      {open && (
-        <p className="mt-3 text-base font-normal text-black/80 leading-[1.5] text-left">
-          {item.answer}
-        </p>
-      )}
+      {/* CSS grid trick: animates height without knowing it */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateRows: open ? "1fr" : "0fr",
+          transition: "grid-template-rows 0.22s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+        }}
+      >
+        <div style={{ overflow: "hidden" }}>
+          <p className="mt-3 text-base font-normal text-black/80 leading-[1.5] text-left">
+            {item.answer}
+          </p>
+        </div>
+      </div>
     </button>
   );
 }

@@ -136,20 +136,23 @@
 }
 
 /* Scroll-triggered fade-in */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* animation-fill-mode: both (backwards) keeps the element at opacity:0
+   while animation-play-state: paused — prevents any flash on load */
 .fade-in {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  will-change: opacity, transform;
+  animation: fadeInUp 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation-play-state: paused;
 }
 .fade-in.is-visible {
-  opacity: 1;
-  transform: translateY(0);
+  animation-play-state: running;
 }
-.fade-in-delay-1 { transition-delay: 0.1s; }
-.fade-in-delay-2 { transition-delay: 0.2s; }
-.fade-in-delay-3 { transition-delay: 0.3s; }
+.fade-in-delay-1 { animation-delay: 0.08s; }
+.fade-in-delay-2 { animation-delay: 0.16s; }
+.fade-in-delay-3 { animation-delay: 0.24s; }
 
 /* Custom CTA colors */
 :root {
