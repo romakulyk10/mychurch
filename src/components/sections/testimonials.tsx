@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useLayoutEffect } from "react";
+import { useRef, useEffect, useLayoutEffect, useState } from "react";
 import FadeIn from "@/components/shared/fade-in";
 
 const TESTIMONIALS = [
@@ -24,22 +24,15 @@ const TESTIMONIALS = [
 
 export default function Testimonials() {
   const [active, setActive] = useState(7);
-  const [showLeft, setShowLeft] = useState(false);
-  const [showRight, setShowRight] = useState(true);
   const listRef = useRef<HTMLDivElement>(null);
-  const avatarRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const rafRef = useRef<number | null>(null);
 
   const scrollToActive = (idx: number, behavior: ScrollBehavior = "smooth") => {
     const container = listRef.current;
     if (!container) return;
-    // Use known final sizes instead of DOM (getBoundingClientRect captures mid-transition
-    // which shifts positions for avatars far from center)
     const isMd = window.innerWidth >= 768;
     const activeW = isMd ? 52 : 48;
     const inactiveW = isMd ? 40 : 36;
-    const gap = 8; // gap-2
-    // All items before idx will be inactive; paddingLeft="50%" cancels out
+    const gap = 8;
     const scrollLeft = idx * (inactiveW + gap) + activeW / 2;
     container.scrollTo({ left: scrollLeft, behavior });
   };
@@ -52,17 +45,6 @@ export default function Testimonials() {
   useEffect(() => {
     scrollToActive(active);
   }, [active]);
-
-  const handleScroll = () => {
-    if (rafRef.current) return;
-    rafRef.current = requestAnimationFrame(() => {
-      rafRef.current = null;
-      const el = listRef.current;
-      if (!el) return;
-      setShowLeft(el.scrollLeft > 4);
-      setShowRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
-    });
-  };
 
   return (
     <section className="w-full flex flex-col items-center py-16 md:py-20">
@@ -89,8 +71,7 @@ export default function Testimonials() {
           >
             {/* Card body */}
             <div className="relative bg-white rounded-[16px] px-6 pt-6 pb-[41px]">
-              {/* Quote mark constrained to 42×62 box so it doesn't overflow */}
-              <div className="absolute top-6 right-6 w-[42px] h-[62px] overflow-hidden select-none">
+              <div className="absolute top-[10px] right-6 w-[42px] h-[64px] overflow-hidden select-none">
                 <span className="text-[#007aff] text-[80px] leading-none [font-family:var(--font-caveat)]">
                   &#x201C;
                 </span>
@@ -106,12 +87,11 @@ export default function Testimonials() {
                   {TESTIMONIALS[active].name}
                 </span>
               </div>
-              {/* min-h keeps card height stable for 1–2 line quotes */}
               <p className="text-base text-black/80 leading-[1.6] tracking-[-0.16px] min-h-[77px]">
                 {TESTIMONIALS[active].text}
               </p>
             </div>
-            {/* Triangle — filled clip-path so drop-shadow wraps both shapes as one Union */}
+            {/* Triangle */}
             <div
               className="absolute left-1/2 -translate-x-1/2 bg-white"
               style={{
@@ -123,20 +103,20 @@ export default function Testimonials() {
             />
           </div>
 
-          {/* Avatar scroll strip */}
+          {/* Avatar strip — no manual scroll, click only */}
           <div className="relative overflow-hidden">
-            <div className={`absolute left-0 top-0 h-full w-8 z-10 pointer-events-none bg-gradient-to-r from-[#fcfcfc] to-transparent transition-opacity duration-150 ${showLeft ? "opacity-100" : "opacity-0"}`} />
-            <div className={`absolute right-0 top-0 h-full w-8 z-10 pointer-events-none bg-gradient-to-l from-[#fcfcfc] to-transparent transition-opacity duration-150 ${showRight ? "opacity-100" : "opacity-0"}`} />
+            <div aria-hidden className="pointer-events-none absolute inset-y-0 left-0 w-14 z-10"
+              style={{ background: "linear-gradient(to right, #fcfcfc 0%, rgba(252,252,252,0) 100%)" }} />
+            <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 w-14 z-10"
+              style={{ background: "linear-gradient(to left, #fcfcfc 0%, rgba(252,252,252,0) 100%)" }} />
             <div
               ref={listRef}
-              onScroll={handleScroll}
-              className="flex gap-2 items-center overflow-x-auto py-2"
+              className="flex gap-2 items-center overflow-x-hidden h-[64px] md:h-[68px]"
               style={{ scrollbarWidth: "none", paddingLeft: "50%", paddingRight: "50%" }}
             >
               {TESTIMONIALS.map((t, i) => (
                 <button
                   key={t.name}
-                  ref={(el) => { avatarRefs.current[i] = el; }}
                   onClick={() => setActive(i)}
                   className={[
                     "rounded-full shrink-0 flex items-center justify-center text-white font-semibold transition-all duration-200",

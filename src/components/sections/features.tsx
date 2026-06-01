@@ -3,19 +3,19 @@ import FadeIn from "@/components/shared/fade-in";
 
 const BLOCKS = [
   {
-    image: "/member.png",
+    image: "/feature-member-profile.webp",
     imageLeft: true,
     title: "Кожна людина має свою повну історію.",
     text: "Профіль, відвідуваність, статус і зв'язки з сім'єю та групою. Нічого не загубиться і не забудеться навіть через роки.",
   },
   {
-    image: "/analitics.png",
+    image: "/feature-analytics.webp",
     imageLeft: false,
     title: "Аналітика показує де потрібна увага.",
     text: "Ви бачите реальну картину активності церкви і приймаєте рішення на основі цифр а не відчуттів. Щотижня нова точка зору на те що відбувається.",
   },
   {
-    image: "/groups.png",
+    image: "/feature-groups.webp",
     imageLeft: true,
     title: "Групи і служіння живуть незалежно від лідера",
     text: "Склад, ролі і відвідуваність зберігаються в системі і не йдуть разом з людиною яка пішла. Наступний лідер бачить все з першого дня",
@@ -50,9 +50,9 @@ export default function Features() {
                 alt={block.title}
                 fill
                 sizes="(max-width: 768px) 100vw, 382px"
-                quality={80}
+                quality={100}
                 loading="lazy"
-                className="object-cover"
+                className="object-contain"
               />
             </div>
             <div className={[
@@ -80,9 +80,9 @@ export default function Features() {
                 alt={block.title}
                 fill
                 sizes="(max-width: 768px) 100vw, 382px"
-                quality={80}
+                quality={100}
                 loading="lazy"
-                className="object-cover"
+                className="object-contain"
               />
             </div>
             <div className="flex flex-col gap-2">

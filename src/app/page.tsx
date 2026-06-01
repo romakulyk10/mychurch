@@ -14,7 +14,7 @@ export default function Home() {
     <main className="flex flex-col items-center bg-[#fcfcfc]">
       <Navbar />
       <Hero />
-      <Trust />
+      {/* <Trust /> */}
       <Problems />
       <Features />
       <Workflow />

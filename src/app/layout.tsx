@@ -15,8 +15,8 @@ const inter = Inter({
 const caveat = Caveat({
   variable: "--font-caveat",
   subsets: ["latin", "cyrillic"],
-  display: "optional",
-  preload: false,
+  display: "swap",
+  preload: true,
 });
 
 export const viewport: Viewport = {

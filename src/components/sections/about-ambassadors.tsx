@@ -60,21 +60,11 @@ const ambassadors = [
     logoColor: "#003a2a",
     logoInitials: "НД",
   },
-  {
-    id: "voskres",
-    name: "Воскресіння",
-    description: "Молода церква з Полтави. Використовує платформу для залучення нових членів та координації волонтерів.",
-    website: "#",
-    websiteLabel: 'Перейти до сайту "Воскресіння"',
-    logoColor: "#3a003a",
-    logoInitials: "ВС",
-  },
 ];
-
-const TRANSITION = "transform 0.42s cubic-bezier(0.25,0.46,0.45,0.94)";
 
 export default function AboutAmbassadors() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [shift, setShift] = useState(0);
   const active = ambassadors[activeIndex];
 
@@ -84,25 +74,22 @@ export default function AboutAmbassadors() {
   const bounds = useRef({ min: 0, max: 0 });
   const drag = useRef({ on: false, startX: 0, startShift: 0, moved: false });
 
+  // Recalculate scroll bounds when active changes (no centering — starts from left)
   useEffect(() => {
     const container = containerRef.current;
-    const wrapper = wrapperRef.current;
-    const activeEl = logoRefs.current[activeIndex];
-    const firstEl = logoRefs.current[0];
     const lastEl = logoRefs.current[ambassadors.length - 1];
-    if (!container || !wrapper || !activeEl || !firstEl || !lastEl) return;
+    if (!container || !lastEl) return;
 
     const cw = container.offsetWidth;
-    const half = cw / 2;
+    const trackEnd = lastEl.offsetLeft + lastEl.offsetWidth;
 
     bounds.current = {
-      max: half - (firstEl.offsetLeft + firstEl.offsetWidth / 2),
-      min: half - (lastEl.offsetLeft + lastEl.offsetWidth / 2),
+      max: 0,
+      min: Math.min(0, cw - trackEnd),
     };
 
-    const target = half - (activeEl.offsetLeft + activeEl.offsetWidth / 2);
-    if (wrapperRef.current) wrapperRef.current.style.transition = TRANSITION;
-    setShift(target);
+    // Clamp current shift in case bounds changed
+    setShift((s) => Math.min(bounds.current.max, Math.max(bounds.current.min, s)));
   }, [activeIndex]);
 
   const clamp = (v: number) => Math.min(bounds.current.max, Math.max(bounds.current.min, v));
@@ -111,7 +98,6 @@ export default function AboutAmbassadors() {
     const w = wrapperRef.current;
     if (!w) return;
     drag.current = { on: true, startX: e.clientX, startShift: shift, moved: false };
-    w.setPointerCapture(e.pointerId);
     w.style.transition = "none";
   };
 
@@ -122,13 +108,14 @@ export default function AboutAmbassadors() {
     setShift(clamp(drag.current.startShift + delta));
   };
 
-  const onPointerUp = (e: React.PointerEvent) => {
+  const onPointerUp = () => {
     drag.current.on = false;
-    wrapperRef.current?.releasePointerCapture(e.pointerId);
+    // Reset moved after click fires so onClick still sees the drag state
+    if (drag.current.moved) setTimeout(() => { drag.current.moved = false; }, 0);
   };
 
   const handleLogoClick = (idx: number) => {
-    if (drag.current.moved) { drag.current.moved = false; return; }
+    if (drag.current.moved) return;
     setActiveIndex(idx);
   };
 
@@ -148,11 +135,11 @@ export default function AboutAmbassadors() {
         </p>
       </FadeIn>
 
-      {/* Logo strip */}
-      <FadeIn delay={1} className="relative w-full flex justify-center mb-10 md:mb-14">
+      {/* Logo strip — закоментовано, повернути коли буде більше церков
+      <FadeIn delay={1} className="relative w-full mb-10 md:mb-14">
         <div
           ref={containerRef}
-          className="relative overflow-hidden w-full max-w-[560px]"
+          className="relative overflow-hidden w-full max-w-[600px] mx-auto px-5 md:px-0"
         >
           <div
             ref={wrapperRef}
@@ -160,53 +147,65 @@ export default function AboutAmbassadors() {
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}
             onPointerCancel={onPointerUp}
-            className="relative flex gap-6 md:gap-8 items-center py-3 select-none"
+            className="relative flex gap-4 items-center h-[74px] select-none"
             style={{
-              paddingLeft: "calc(50% - 36px)",
               transform: `translateX(${shift}px)`,
               cursor: "grab",
               willChange: "transform",
             }}
           >
-            {ambassadors.map((amb, i) => (
-              <button
-                key={amb.id}
-                ref={(el) => { logoRefs.current[i] = el; }}
-                onClick={() => handleLogoClick(i)}
-                className={cn(
-                  "shrink-0 rounded-[14px] flex items-center justify-center font-semibold text-white transition-all duration-300",
-                  i === activeIndex
-                    ? "w-[64px] h-[64px] md:w-[72px] md:h-[72px] text-[16px] md:text-[18px]"
-                    : "w-[56px] h-[56px] md:w-[64px] md:h-[64px] text-[14px] md:text-[16px] opacity-60 grayscale"
-                )}
-                style={{ backgroundColor: amb.logoColor }}
-                aria-label={amb.name}
-              >
-                {amb.logoInitials}
-              </button>
-            ))}
+            {ambassadors.map((amb, i) => {
+              const isActive = i === activeIndex;
+              const isHovered = hoveredIndex === i;
+              return (
+                <button
+                  key={amb.id}
+                  ref={(el) => { logoRefs.current[i] = el; }}
+                  onClick={() => handleLogoClick(i)}
+                  onMouseEnter={() => setHoveredIndex(i)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                  className="shrink-0 rounded-[14px] transition-all duration-300"
+                  style={{
+                    width:  isActive ? 72 : 64,
+                    height: isActive ? 72 : 64,
+                    backgroundColor: isActive || isHovered ? amb.logoColor : "#D9D9D9",
+                  }}
+                  aria-label={amb.name}
+                />
+              );
+            })}
           </div>
 
-          <div className="absolute left-0 top-0 h-full w-10 z-10 pointer-events-none bg-gradient-to-r from-[#fcfcfc] to-[rgba(252,252,252,0)]" />
-          <div className="absolute right-0 top-0 h-full w-10 z-10 pointer-events-none bg-gradient-to-l from-[#fcfcfc] to-[rgba(252,252,252,0)]" />
+          {shift < -2 && (
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-[72px] w-10 z-10 pointer-events-none"
+              style={{ background: "linear-gradient(to right, rgba(252,252,252,1) 0%, rgba(252,252,252,0.8) 30%, rgba(252,252,252,0) 100%)" }}
+            />
+          )}
+          {shift > bounds.current.min + 2 && (
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 h-[72px] w-10 z-10 pointer-events-none"
+              style={{ background: "linear-gradient(to left, rgba(252,252,252,1) 0%, rgba(252,252,252,0.8) 30%, rgba(252,252,252,0) 100%)" }}
+            />
+          )}
         </div>
       </FadeIn>
+      */}
 
       {/* Church card */}
-      <FadeIn delay={2} className="w-full max-w-[600px] px-5 md:px-0 relative">
+      <FadeIn delay={1} className="w-full max-w-[600px] px-5 md:px-0 relative">
 
-        {/* Arrows — outside on desktop, inside on mobile */}
+        {/* Arrows — закоментовано, повернути коли буде більше церков
         <button
           onClick={prev}
           className="absolute left-0 md:-left-[60px] top-[155px] md:top-[175px] -translate-y-1/2 z-10 flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-white shadow-[0px_0px_0px_1px_rgba(0,0,0,0.15),0px_3px_2px_0px_rgba(0,0,0,0.06)] hover:shadow-[0px_0px_0px_1px_rgba(0,0,0,0.2),0px_4px_4px_0px_rgba(0,0,0,0.08)] transition-shadow"
           aria-label="Попередній"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M17 3L7 12L17 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
+        */}
 
-        <div className="flex flex-col gap-5 md:gap-6 px-14 md:px-0">
+        <div className="flex flex-col gap-5 md:gap-6">
           <div className="w-full h-[260px] md:h-[360px] rounded-[16px] bg-[#d9d9d9]" />
           <div className="flex flex-col gap-4 md:gap-6">
             <div className="flex flex-col gap-2">
@@ -230,15 +229,17 @@ export default function AboutAmbassadors() {
           </div>
         </div>
 
+        {/* Стрілка "Наступний" — закоментовано, повернути коли буде більше церков
         <button
           onClick={next}
           className="absolute right-0 md:-right-[60px] top-[155px] md:top-[175px] -translate-y-1/2 z-10 flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-full bg-white shadow-[0px_0px_0px_1px_rgba(0,0,0,0.15),0px_3px_2px_0px_rgba(0,0,0,0.06)] hover:shadow-[0px_0px_0px_1px_rgba(0,0,0,0.2),0px_4px_4px_0px_rgba(0,0,0,0.08)] transition-shadow"
           aria-label="Наступний"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M7 3L17 12L7 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
+        */}
       </FadeIn>
 
     </section>

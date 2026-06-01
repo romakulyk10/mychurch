@@ -135,29 +135,27 @@ export default function Faq() {
 
       {/* Hero */}
       <section className="w-full bg-white py-[80px] relative">
-        <FadeIn className="w-full max-w-[600px] mx-auto px-5 md:px-0 flex flex-col items-center gap-8">
-          <div className="w-[72px] h-[72px] rounded-[16px] bg-[#d9d9d9] shrink-0" />
-          <div className="flex flex-col items-center text-center gap-5">
-            <h2 className="font-semibold text-black text-[36px] md:text-[53px] leading-[1.12] tracking-[-1.08px] md:tracking-[-1.59px]">
-              Найчастіші запитання
-            </h2>
-            <p className="text-base font-normal text-black/80 leading-[1.5] max-w-[447px]">
-              Тут зібрані відповіді на найпоширеніші запитання про роботу платформи MyChurch.
-            </p>
-          </div>
+        <FadeIn className="relative z-10 w-full max-w-[600px] mx-auto px-5 md:px-0 flex flex-col items-center gap-5 text-center">
+          <h2 className="font-semibold text-black text-[36px] md:text-[53px] leading-[1.12] tracking-[-1.08px] md:tracking-[-1.59px]">
+            Найчастіші запитання
+          </h2>
+          <p className="text-base font-normal text-black/80 leading-[1.5] max-w-[447px]">
+            Тут зібрані відповіді на найпоширеніші запитання про роботу платформи MyChurch.
+          </p>
         </FadeIn>
         {/* Gradient fade white → #fcfcfc */}
         <div className="absolute bottom-0 left-0 right-0 h-[80px] bg-gradient-to-b from-white to-[#fcfcfc] pointer-events-none" />
       </section>
 
-      {/* FAQ categories */}
+      {/* FAQ categories — one block, animates on mount before scroll */}
+      <div style={{ animation: "fadeInUp 0.55s 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) both" }}>
       {categories.map((category, index) => (
         <section
           key={category.title}
           className={`w-full ${index === 0 ? "py-[80px]" : "pt-[40px] pb-[80px]"}`}
         >
           <div className="w-full max-w-[600px] mx-auto px-5 md:px-0">
-            <FadeIn delay={(Math.min(index + 1, 3)) as 0 | 1 | 2 | 3} className="flex flex-col gap-[40px]">
+            <div className="flex flex-col gap-[40px]">
               <h3 className="text-[24px] md:text-[32px] font-semibold text-black leading-[1.2] tracking-[-0.72px] md:tracking-[-0.96px]">
                 {category.title}
               </h3>
@@ -166,10 +164,11 @@ export default function Faq() {
                   <FaqCard key={item.id} item={item} />
                 ))}
               </div>
-            </FadeIn>
+            </div>
           </div>
         </section>
       ))}
+      </div>
 
     </div>
   );

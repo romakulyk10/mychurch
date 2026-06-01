@@ -135,14 +135,6 @@
   }
 }
 
-/* Marquee infinite scroll */
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-.animate-marquee {
-  animation: marquee 20s linear infinite;
-}
 
 /* Scroll-triggered fade-in */
 @keyframes fadeInUp {
